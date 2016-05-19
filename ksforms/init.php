@@ -20,7 +20,9 @@ class Form {
         }
     }
     
-    public function validate();
+    public function validate($post_data) { // boolean
+        
+    }
     
     public function show();
     

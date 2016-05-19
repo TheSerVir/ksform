@@ -11,20 +11,39 @@ namespace ksf;
 class Element {
     
     private $parameters = [];
+    private $dir = "/templates/{name}.html";
+    
+    private $type;
+    private $template;
+    
     
     public function __construct($data = null) {
+        $this->dir = dirname(__FILE__).$dir;
         if(is_array($args)) {
-            if(isset($args["type"]) && file_exists(dirname(__FILE__)."/templates/".$args["type"].".html")) {
-                foreach($args as $data) {
-
+            if(isset($args["type"])) {
+                $this->setType($args["type"]);
+                unset($args["type"]);
+                foreach($args as $key => $val) {
+                    $this->parameters[$key] = $val;
                 }
-            } else trigger_error ("Template ".$args["type"]." is not found");
+            } else trigger_error ("Type is not defined");
         }
     }
     
-    public function __set($name, $value) {
-        if(strcmp($name, "type"))
+    private function __set($name, $value) {
+        if(strcmp($name, "type")) {
             $this->parameters[$name] = $value;  
+        } else {
+            $this->setType($value);
+        }
+    }
+    
+    public function setType($type) {
+        $this->type = $type;
+        $file = str_replace("{name}", $type, $this->dir);
+        if(file_exists($file)) {
+            $this->template = file_get_contents($file);
+        } else trigger_error ("Template '".$args["type"]."' is not found");
     }
     
 }
