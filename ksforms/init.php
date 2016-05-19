@@ -24,6 +24,14 @@ class Form {
         
     }
     
-    public function show();
+    public function show() {
+        foreach($this->element_list as $element)
+            $element->show();
+    }
+    
+    public function getHTML() {
+        foreach($this->element_list as $element)
+            $element->getHTML();
+    }
     
 }

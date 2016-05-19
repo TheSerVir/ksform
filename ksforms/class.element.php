@@ -38,12 +38,24 @@ class Element {
         }
     }
     
+    public function __call($name, $args) {
+        
+    }
+    
     public function setType($type) {
         $this->type = $type;
         $file = str_replace("{name}", $type, $this->dir);
         if(file_exists($file)) {
             $this->template = file_get_contents($file);
         } else trigger_error ("Template '".$args["type"]."' is not found");
+    }
+    
+    public function show() {
+        // TODO
+    }
+    
+    public function getHTML() {
+        // TODO
     }
     
 }
