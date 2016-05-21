@@ -24,7 +24,7 @@ class Element {
                 $this->setType($args["type"]);
                 unset($args["type"]);
                 foreach($args as $key => $val) {
-                    $this->parameters[$key] = $val;
+                    $this->parameters[strtolower($key)] = $val;
                 }
             } else trigger_error ("Type is not defined");
         }
@@ -39,7 +39,19 @@ class Element {
     }
     
     public function __call($name, $args) {
-        
+        if(equals(substr($name, 0, 3), "get")) {
+            $key = substr($name, 3, strlen($name)-3);
+            if($key == "Type") return $this->type;
+            else {
+                return $this->parameters[strtolower($key)];
+            }           
+        } elseif(equals(substr($name, 0, 3), "set")) {
+            $key = substr($name, 3, strlen($name)-3);
+            if($key == "Type") $this->setType($args[0]);
+            else {
+                $this->parameters[strtolower($key)] = $args[0];
+            }
+        }
     }
     
     public function setType($type) {
@@ -50,8 +62,11 @@ class Element {
         } else trigger_error ("Template '".$args["type"]."' is not found");
     }
     
-    public function show() {
-        // TODO
+    /*
+     * 
+     */
+    public function show($parameters) {
+        
     }
     
     public function getHTML() {

@@ -10,12 +10,21 @@ namespace ksf;
 
 class Form {
     
+    private $form_parameters = [];
     private $element_list = [];
     
     public function __construct($args = null) {
         if(is_array($args)) {
-            foreach($args as $data) {
-                $element_list[] = new Element($data);
+            foreach($args as $key => $val) {
+                switch($key) {
+                    case "elements":
+                        foreach($val as $data)
+                            $element_list[] = new Element($data);
+                    break;
+                    default:
+                        $form_parameters[$key] = $val;
+                    break;
+                }
             }
         }
     }
