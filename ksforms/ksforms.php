@@ -18,8 +18,10 @@ class Form {
             foreach($args as $key => $val) {
                 switch($key) {
                     case "elements":
-                        foreach($val as $data)
-                            $element_list[] = new Element($data);
+                        foreach($val as $data) {
+                            if(!isset($data["name"])) trigger_error ("Error: name is not exists");
+                            $element_list[] = new Element($data["name"], $data);
+                        }
                     break;
                     default:
                         $form_parameters[$key] = $val;

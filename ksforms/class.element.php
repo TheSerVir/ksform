@@ -17,7 +17,7 @@ class Element {
     private $template;
     
     
-    public function __construct($data = null) {
+    public function __construct($name, $data = null) {
         $this->dir = dirname(__FILE__).$dir;
         if(is_array($args)) {
             if(isset($args["type"])) {
@@ -26,8 +26,20 @@ class Element {
                 foreach($args as $key => $val) {
                     $this->parameters[strtolower($key)] = $val;
                 }
+                $this->mrgoose();
             } else trigger_error ("Type is not defined");
         }
+    }
+    
+    /*
+     * Парсит шаблон и подставляет значения
+     */
+    private function mrgoose() {
+        foreach($this->parameters as $key => $val)
+            if(is_array($val))
+                $this->template = str_replace('{$'.$key.'}', $val, implode(" ",$this->template));
+            else
+                $this->template = str_replace('{$'.$key.'}', $val, $this->template);
     }
     
     private function __set($name, $value) {
@@ -65,12 +77,12 @@ class Element {
     /*
      * 
      */
-    public function show($parameters) {
-        
+    public function show() {
+        echo $this->template;
     }
     
     public function getHTML() {
-        // TODO
+        return $this->template;
     }
     
 }
