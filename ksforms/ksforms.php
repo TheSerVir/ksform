@@ -31,7 +31,7 @@ class Form {
                 switch($key) {
                     case "elements":
                         foreach($val as $name => $data) {
-                            $element_list[] = new Element($name, $data);
+                            $this->element_list[] = new Element($name, $data);
                         }
                     break;
                     default:
@@ -51,13 +51,14 @@ class Form {
     }
     
     public function getHTML() {
-        $html = "<form ";
+        $html = "<form";
         foreach($this->form_parameters as $key => $val) {
-            $html .= "$key=\"$val\"";
+            $html .= " $key=\"$val\"";
         }
         $html .= ">\r\n";
-        foreach($this->element_list as $element)
+        foreach($this->element_list as $element) {
             $html .= $element->getHTML() . "\r\n";
+        }
         $html .= "</form>";
         return $html;
     }

@@ -13,6 +13,7 @@ $form = new ksf\Form([
     "type" => "POST",
     "elements" => [
         "elem1" => [
+            "type" => "text",
             "title" => "Форма",
             "class" => "validators",
             "value" => "",

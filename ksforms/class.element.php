@@ -10,6 +10,7 @@ namespace ksf;
 
 class Element {
     
+    private $name;
     private $parameters = [];
     private $dir = "/templates/{name}.html";
     
@@ -17,16 +18,17 @@ class Element {
     private $template;
     
     
-    public function __construct($name, $data = null) {
-        $this->dir = dirname(__FILE__).$dir;
+    public function __construct($name, $args = null) {
         if(is_array($args)) {
             if(isset($args["type"])) {
                 $this->setType($args["type"]);
                 unset($args["type"]);
+                
                 foreach($args as $key => $val) {
                     $this->parameters[strtolower($key)] = $val;
                 }
-                $this->parameters["name"] = $name;
+                
+                list($this->parameters["name"], $this->name) = $name;
                 $this->mrgoose();
             } else die ("Type is not defined");
         }
@@ -36,6 +38,7 @@ class Element {
      * Парсит шаблон и подставляет значения
      */
     private function mrgoose() {
+        $this->template = str_replace('{$name}', '{$_prefix}'.$val, $this->template);
         foreach ($this->parameters as $key => $val) {
             if (is_array($val))
                 $this->template = str_replace('{$' . $key . '}', $val, implode(" ", $this->template));
@@ -65,21 +68,27 @@ class Element {
     
     public function setType($type) {
         $this->type = $type;
-        $file = str_replace("{name}", $type, $this->dir);
+        $file = dirname(__FILE__).str_replace("{name}", $type, $this->dir);
         if(file_exists($file)) {
             $this->template = file_get_contents($file);  
-        } else die ("Template '".$args["type"]."' is not found");
+        } else die ("Template '".$type."' is not found");
+        if (count($this->parameters) > 0) $this->mrgoose();
+    }
+    
+    public function setName($name) {
+        if(strlen($name) == 0) die("Name must have at least 1 character");
+        list($this->parameters["name"], $this->name) = $name;
     }
     
     /*
      * 
      */
-    public function show() {
-        echo $this->template;
+    public function show($prefix = "") {
+        echo $this->getHTML();
     }
     
-    public function getHTML() {
-        return $this->template;
+    public function getHTML($prefix = "") {
+        return str_replace('{$_prefix}', $prefix, $this->template);
     }
     
 }
