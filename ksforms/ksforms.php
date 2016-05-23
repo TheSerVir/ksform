@@ -8,6 +8,18 @@
 
 namespace ksf;
 
+require_once 'class.element.php';
+
+$dir = dirname(__FILE__) . "/validators/";
+if (is_dir($dir)) {
+    if ($dh = opendir($dir)) {
+        while (($file = readdir($dh)) !== false && $file != "." && $file != "..") {
+            require_once $dir.$file;
+        }
+        closedir($dh);
+    }
+}
+
 class Form {
     
     private $form_parameters = [];
@@ -18,13 +30,12 @@ class Form {
             foreach($args as $key => $val) {
                 switch($key) {
                     case "elements":
-                        foreach($val as $data) {
-                            if(!isset($data["name"])) trigger_error ("Error: name is not exists");
-                            $element_list[] = new Element($data["name"], $data);
+                        foreach($val as $name => $data) {
+                            $element_list[] = new Element($name, $data);
                         }
                     break;
                     default:
-                        $form_parameters[$key] = $val;
+                        $this->form_parameters[$key] = $val;
                     break;
                 }
             }
@@ -36,13 +47,19 @@ class Form {
     }
     
     public function show() {
-        foreach($this->element_list as $element)
-            $element->show();
+        echo $this->getHTML();
     }
     
     public function getHTML() {
+        $html = "<form ";
+        foreach($this->form_parameters as $key => $val) {
+            $html .= "$key=\"$val\"";
+        }
+        $html .= ">\r\n";
         foreach($this->element_list as $element)
-            $element->getHTML();
+            $html .= $element->getHTML() . "\r\n";
+        $html .= "</form>";
+        return $html;
     }
     
 }

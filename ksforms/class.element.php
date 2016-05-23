@@ -26,8 +26,9 @@ class Element {
                 foreach($args as $key => $val) {
                     $this->parameters[strtolower($key)] = $val;
                 }
+                $this->parameters["name"] = $name;
                 $this->mrgoose();
-            } else trigger_error ("Type is not defined");
+            } else die ("Type is not defined");
         }
     }
     
@@ -35,18 +36,17 @@ class Element {
      * Парсит шаблон и подставляет значения
      */
     private function mrgoose() {
-        foreach($this->parameters as $key => $val)
-            if(is_array($val))
-                $this->template = str_replace('{$'.$key.'}', $val, implode(" ",$this->template));
+        foreach ($this->parameters as $key => $val) {
+            if (is_array($val))
+                $this->template = str_replace('{$' . $key . '}', $val, implode(" ", $this->template));
             else
-                $this->template = str_replace('{$'.$key.'}', $val, $this->template);
+                $this->template = str_replace('{$' . $key . '}', $val, $this->template);
+        }
     }
     
-    private function __set($name, $value) {
-        if(strcmp($name, "type")) {
-            $this->parameters[$name] = $value;  
-        } else {
-            $this->setType($value);
+    public function __set($name, $value) {
+        if(equals(substr($name, 0, 3), "set")) {
+            $this->parameters[$name] = $value;
         }
     }
     
@@ -59,10 +59,7 @@ class Element {
             }           
         } elseif(equals(substr($name, 0, 3), "set")) {
             $key = substr($name, 3, strlen($name)-3);
-            if($key == "Type") $this->setType($args[0]);
-            else {
-                $this->parameters[strtolower($key)] = $args[0];
-            }
+            $this->parameters[strtolower($key)] = $args[0];
         }
     }
     
@@ -70,8 +67,8 @@ class Element {
         $this->type = $type;
         $file = str_replace("{name}", $type, $this->dir);
         if(file_exists($file)) {
-            $this->template = file_get_contents($file);
-        } else trigger_error ("Template '".$args["type"]."' is not found");
+            $this->template = file_get_contents($file);  
+        } else die ("Template '".$args["type"]."' is not found");
     }
     
     /*
