@@ -24,6 +24,7 @@ class Form {
     
     private $form_parameters = [];
     private $element_list = [];
+    private $prefix;
     
     public function __construct($args = null) {
         if(is_array($args)) {
@@ -33,6 +34,9 @@ class Form {
                         foreach($val as $name => $data) {
                             $this->element_list[] = new Element($name, $data);
                         }
+                    break;
+                    case "prefix":
+                        $this->prefix = $val;
                     break;
                     default:
                         $this->form_parameters[$key] = $val;
@@ -57,7 +61,7 @@ class Form {
         }
         $html .= ">\r\n";
         foreach($this->element_list as $element) {
-            $html .= $element->getHTML() . "\r\n";
+            $html .= $element->getHTML($this->prefix) . "\r\n";
         }
         $html .= "</form>";
         return $html;

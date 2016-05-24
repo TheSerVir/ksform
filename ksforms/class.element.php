@@ -45,6 +45,7 @@ class Element {
             else
                 $this->template = str_replace('{$' . $key . '}', $val, $this->template);
         }
+        $this->template = preg_replace("/{\$[a-zA-Z_]+}/m", "", $this->template);
     }
     
     public function __set($name, $value) {
