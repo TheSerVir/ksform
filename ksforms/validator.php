@@ -8,9 +8,14 @@
 
 namespace ksf\Validators;
 
-interface Validator {
+abstract class Validator {
+ 
+    private $messages = ["", ""];
     
-    public static function validate($string);
-    public static function getMessages();
+    public abstract static function validate($string);
+    
+    public static function getMessages() {
+        return $this->messages;
+    }
     
 }

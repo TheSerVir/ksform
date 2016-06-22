@@ -8,18 +8,12 @@
 
 namespace ksf\Validators;
 
-class Email implements Validator {
-    
-    private $messages = ["", ""];
+class Email extends Validator {
     
     public static function validate($string) {
         if(preg_match("/^[a-zA-Z0-9_\-.]+@[a-zA-Z0-9\-]+\.[a-zA-Z0-9\-.]+$/", $string) === 1) return true;
         $this->message = ["Мы не сможем вам написать", "Вы ввели некорректный E-mail"];
         return false;
-    }
-    
-    public static function getMessages() {
-        return $this->messages;
     }
     
 }
