@@ -22,8 +22,8 @@ if (is_dir($dir)) {
 
 class Form {
     
-    private $form_parameters = [];
-    private $element_list = [];
+    private $parameters = [];
+    private $elements = [];
     private $prefix;
     
     public function __construct($args = null) {
@@ -32,14 +32,19 @@ class Form {
                 switch($key) {
                     case "elements":
                         foreach($val as $name => $data) {
-                            $this->element_list[] = new Element($name, $data);
+                            if(isset($data["type"]) && file_exists(dirname(__FILE__)."/elements/element.".strtolower($data["type"]).".php")) {
+                                $classname = ucfirst(strtolower($data["type"]));
+                                $this->elements[$name] = new $classname($name, $data);
+                            } else {
+                                $this->elements[$name] = new Element($name, $data);
+                            }
                         }
                     break;
                     case "prefix":
                         $this->prefix = $val;
                     break;
                     default:
-                        $this->form_parameters[$key] = $val;
+                        $this->parameters[$key] = $val;
                     break;
                 }
             }
@@ -47,7 +52,14 @@ class Form {
     }
     
     public function validate($post_data) { // boolean
-        
+        $res = true;
+        foreach($post_data as $key => $val) {
+            if(isset($this->elements[$key])) {
+                if(!$this->elements[$key]->validate($val))
+                    $res = false;
+            }
+        }
+        return $res;
     }
     
     public function show() {
@@ -55,15 +67,15 @@ class Form {
     }
     
     public function getHTML() {
-        $html = "<form";
-        foreach($this->form_parameters as $key => $val) {
+        $html = '<form';
+        foreach($this->parameters as $key => $val) {
             $html .= " $key=\"$val\"";
         }
         $html .= ">\r\n";
-        foreach($this->element_list as $element) {
+        foreach($this->elements as $element) {
             $html .= $element->getHTML($this->prefix) . "\r\n";
         }
-        $html .= "</form>";
+        $html .= '</form>';
         return $html;
     }
     

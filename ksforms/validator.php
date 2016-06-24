@@ -9,13 +9,21 @@
 namespace ksf\Validators;
 
 abstract class Validator {
- 
-    private $messages = ["", ""];
+    
+    private $warning;
+    private $parameters;
+    private $error = [];
+    
+    public final function __construct($par = null, $args) {
+        $this->parameters = $par;
+        if(is_array($args) && count($args) > 1) {
+            $this->warning = $args[0];
+            $this->error[] = array_slice($args, 1);
+        } else {
+            trigger_error("Invalid arguments");
+        }
+    }
     
     public abstract static function validate($string);
-    
-    public static function getMessages() {
-        return $this->messages;
-    }
     
 }

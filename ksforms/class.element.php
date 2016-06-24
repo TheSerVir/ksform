@@ -10,86 +10,82 @@ namespace ksf;
 
 class Element {
     
-    private $name;
-    private $parameters = [];
-    private $dir = "/templates/{name}.html";
+    private $name = null;
+    private $type = null;
+    private $value = "";
     
-    private $type;
-    private $template;
+    private $parameters = [];
+    private $validators = [];
+    private $template = "./templates/{name}.html";
     
     
     public function __construct($name, $args = null) {
+        $this->name = $name;
         if(is_array($args)) {
-            if(isset($args["type"])) {
-                $this->setType($args["type"]);
-                unset($args["type"]);
-                
-                foreach($args as $key => $val) {
-                    $this->parameters[strtolower($key)] = $val;
+            foreach($args as $k => $v) {
+                switch($k) {
+                    case "type":
+                        $this->type = $v;
+                    break;
+                    case "validators":
+                        $this->validators = $v;
+                    break;
+                    case "warning":
+                    case "error":
+                        trigger_error("You can't use that names");
+                    break;
+                    default:
+                        if($k == 'value') $this->value = $v;
+                        $this->parameters[$k] = $v;
+                    break;
                 }
-                
-                list($this->parameters["name"], $this->name) = $name;
-                $this->mrgoose();
-            } else die ("Type is not defined");
+            }
+            if(is_null($this->name) || is_null($this->type) || !strlen($this->name) || !strlen($this->type)) {
+                trigger_error("Incorrect name or type of element");
+            }
+            $this->templateUrl();
         }
     }
     
-    /*
-     * Парсит шаблон и подставляет значения
-     */
-    private function mrgoose() {
-        $this->template = str_replace('{$name}', '{$_prefix}'.$val, $this->template);
-        foreach ($this->parameters as $key => $val) {
-            if (is_array($val))
-                $this->template = str_replace('{$' . $key . '}', $val, implode(" ", $this->template));
-            else
-                $this->template = str_replace('{$' . $key . '}', $val, $this->template);
-        }
-        $this->template = preg_replace("/{\$[a-zA-Z]+}/m", "", $this->template);
+    private final function templateUrl() {
+        if($this->template[0] == '.') $this->template = dirname(__FILE__) . trim($this->template, '.');
+        $this->template = str_replace("{name}", $this->type, $this->template);
     }
-    
-    public function __set($name, $value) {
-        if(equals(substr($name, 0, 3), "set")) {
-            $this->parameters[$name] = $value;
-        }
-    }
-    
-    public function __call($name, $args) {
-        if(equals(substr($name, 0, 3), "get")) {
-            $key = substr($name, 3, strlen($name)-3);
-            if($key == "Type") return $this->type;
-            else {
-                return $this->parameters[strtolower($key)];
-            }           
-        } elseif(equals(substr($name, 0, 3), "set")) {
-            $key = substr($name, 3, strlen($name)-3);
-            $this->parameters[strtolower($key)] = $args[0];
-        }
-    }
-    
-    public function setType($type) {
-        $this->type = $type;
-        $file = dirname(__FILE__).str_replace("{name}", $type, $this->dir);
-        if(file_exists($file)) {
-            $this->template = file_get_contents($file);  
-        } else die ("Template '".$type."' is not found");
-        if (count($this->parameters) > 0) $this->mrgoose();
-    }
-    
-    public function setName($name) {
-        if(strlen($name) == 0) die("Name must have at least 1 character");
-        list($this->parameters["name"], $this->name) = $name;
-    }
-    
-    /*
-     * 
-     */
+
     public function show($prefix = "") {
         echo $this->getHTML($prefix);
     }
     
     public function getHTML($prefix = "") {
-        return str_replace('{$_prefix}', $prefix, $this->template);
+        if(file_exists($this->template)) {
+            $template = str_replace('{$name}', $prefix.$this->name, file_get_contents($this->template));
+            foreach($this->parameters as $k => $v) {
+                $template = str_replace('{$'.$k.'}', $v, $template);
+            }
+            $template = preg_replace("/{\\$[a-zA-Z]+}/m", "", $template);
+            return $template;
+        } else {
+            trigger_error("Template is not exists");
+        }
+    }
+    
+    public function validate($string) {
+        if(isset($this->parameters["validators"])) {
+            $temp = null;
+            foreach($this->parameters["validators"] as $k => $v) {
+                $exp = explode(":", ucfirst(strtolower($k)));
+                $classname = $exp[0];
+                $temp = $classname($exp[0], $v);
+                $res = $temp->validate($string);
+                var_dump($res);
+                if($res !== true) {
+                    $this->parameters["warning"] = $res["warning"];
+                    $this->parameters["error"] = $res["error"];
+                    return false;
+                }
+            }
+        }
+        return true;
     }
     
 }
