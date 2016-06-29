@@ -9,12 +9,15 @@
 namespace ksf;
 
 require_once 'class.element.php';
+require_once 'class.validator.php';
 
 $dir = dirname(__FILE__) . "/validators/";
 if (is_dir($dir)) {
     if ($dh = opendir($dir)) {
-        while (($file = readdir($dh)) !== false && $file != "." && $file != "..") {
-            require_once $dir.$file;
+        while (($file = readdir($dh)) !== false) {
+            if($file != "." && $file != "..") {
+                require_once $dir.$file;
+            }
         }
         closedir($dh);
     }
@@ -77,6 +80,14 @@ class Form {
         }
         $html .= '</form>';
         return $html;
+    }
+    
+    public function getData() {
+        $values = [];
+        foreach($this->elements as $elem) {
+            $values[$elem->getName()] = $elem->getValue();
+        }
+        return $values;
     }
     
 }

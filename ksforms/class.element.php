@@ -70,14 +70,14 @@ class Element {
     }
     
     public function validate($string) {
-        if(isset($this->parameters["validators"])) {
+        $this->parameters["value"] = $string;
+        if(isset($this->validators)) {
             $temp = null;
-            foreach($this->parameters["validators"] as $k => $v) {
+            foreach($this->validators as $k => $v) {
                 $exp = explode(":", ucfirst(strtolower($k)));
-                $classname = $exp[0];
-                $temp = $classname($exp[0], $v);
+                $classname = "\\ksf\\Validators\\".$exp[0];
+                $temp = new $classname($exp[1], $v);
                 $res = $temp->validate($string);
-                var_dump($res);
                 if($res !== true) {
                     $this->parameters["warning"] = $res["warning"];
                     $this->parameters["error"] = $res["error"];
@@ -86,6 +86,14 @@ class Element {
             }
         }
         return true;
+    }
+    
+    public function getName() {
+        return $this->name;
+    }
+    
+    public function getValue() {
+        return (isset($this->parameters["value"])) ? $this->parameters["value"] : "";
     }
     
 }

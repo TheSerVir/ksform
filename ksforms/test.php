@@ -34,5 +34,6 @@ $form = new ksf\Form([
 ]);
 if(isset($_POST)) {
     $form->validate($_POST);
+    var_dump($form->getData());
 }
 $form->show();
