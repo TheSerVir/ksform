@@ -5,8 +5,8 @@
  * @author Sergey Virstyuk (theservir) <sergeyvirstyuk@gmail.com>
  * @copyright 2016 Virstyuk Sergey
  * Об ошибках:
- * Первая ошибка - если символов меньше, чем нужно
- * Вторая ошибка - если символов больше чем нужно (необязательный параметр, если не задана вторая граница)
+ * Первая ошибка - если символов больше, чем нужно
+ * Вторая ошибка - если символов меньше, чем нужно (ненужный параметр, если задан только один параметр)
  */
 
 namespace ksf\Validators;
@@ -23,12 +23,12 @@ class Length extends Validator {
                 $from = -1;
                 $to = intval($par[0]); 
             }
-            if (strlen($string) < $from) {
-                return ["warning" => $this->warning, "error" => $this->error[0]];
+            if (iconv_strlen($string) > $to) {
+                    return ["warning" => $this->warning, "error" => $this->error[0]];
             }
-            if (strlen($string) > $to) {
+            if (iconv_strlen($string) < $from) {
                 if(isset($this->error[1])) {
-                    return ["warning" => $this->warning, "error" => $this->error[1]];
+                    return ["warning" => $this->warning, "error" => $this->error[1]];                
                 } else {
                     trigger_error("No second error parameter");
                     return false;

@@ -19,7 +19,7 @@ $form = new ksf\Form([
             "value" => "",
             "placeholder" => "Носки",
             "validators" => [
-                    "length:5-10" => ["warning", "error1", "error2"]
+                    "length:5-10" => ["Проблемы с количеством символов", "Много их", "Мало их"]
                 ]
             ],
         "price" => [
@@ -34,6 +34,6 @@ $form = new ksf\Form([
 ]);
 if(isset($_POST)) {
     $form->validate($_POST);
-    var_dump($form->getData());
+    //var_dump($form->getData());
 }
 $form->show();
