@@ -73,8 +73,17 @@ class Form {
     }
     
     public function removeElement($name) {
-        if(isset($name)) {
+        if(isset($this->elements[$name])) {
             unset($this->elements[$name]);
+        } 
+    }
+    
+    public function setElementPosition($name, $position) {
+        if(isset($this->elements[$name])) {
+            $temp = $this->elements[$name];
+            unset($this->elements[$name]);
+            $this->elements = insertIntoAssoc($this->elements, $name, $temp, $position);
+            unset($temp);
         } 
     }
     

@@ -60,6 +60,7 @@ $form = new ksf\Form($form);
 
 $form->setElement("sh", ["type" => "submit", "text" => "Сохранить"], 0);
 $form->removeElement("sh");
+$form->setElementPosition("submit", 1);
 
 //if(isset($_POST)) {
 //    var_dump($form->validate($_POST));
