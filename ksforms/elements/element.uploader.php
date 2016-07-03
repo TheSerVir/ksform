@@ -8,6 +8,6 @@
 
 namespace ksf;
 
-class Uploader extends ksf\Element {
+class Uploader extends Element {
     
 }

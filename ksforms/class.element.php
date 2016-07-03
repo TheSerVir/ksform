@@ -58,7 +58,7 @@ class Element {
     
     public function getHTML($prefix = "") {
         if(file_exists($this->template)) {
-            $template = str_replace('{$name}', $prefix.$this->name, file_get_contents($this->template));
+            $template = str_replace('{$name}', $prefix.$this->name, Templates::get($this->template));
             foreach($this->parameters as $k => $v) {
                 $template = str_replace('{$'.$k.'}', $v, $template);
             }
