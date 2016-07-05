@@ -89,10 +89,13 @@ class Form {
     
     public function validate($post_data) { // boolean
         $res = true;
-        foreach($post_data as $key => $val) {
-            if(isset($this->elements[$key])) {
-                if(!$this->elements[$key]->validate($val))
+        foreach($this->elements as $key => $val) {
+            if(isset($post_data[$key])) {
+                if(!$val->validate($post_data[$key]))
                     $res = false;
+            } else {
+                 if(!$val->validate(""))
+                    $res = false;               
             }
         }
         return $res;

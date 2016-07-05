@@ -76,7 +76,7 @@ class Element {
             foreach($this->validators as $k => $v) {
                 $exp = explode(":", ucfirst(strtolower($k)));
                 $classname = "\\ksf\\Validators\\".$exp[0];
-                $temp = new $classname($exp[1], $v);
+                $temp = new $classname((isset($exp[1])) ? $exp[1] : "", $v);
                 $res = $temp->validate($string);
                 if($res !== true) {
                     $this->parameters["warning"] = $res["warning"];
