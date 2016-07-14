@@ -89,6 +89,15 @@ $form = "
             class switch
             before <div>
             after </div>
+        shipping
+            type radio
+            title Shipping method
+            values
+                type1 Новая почта
+                type2 Хуевая почта
+                type3 Укрпочта
+            before <div>
+            after </div>
         submit
             type submit
             text Сохранить
@@ -102,7 +111,7 @@ $form->setElement("sh", ["type" => "submit", "text" => "Сохранить"], 0)
 var_dump($_POST);
 if(isset($_POST["form"])) {
     var_dump($form->validate($_POST));
-//    var_dump($form->getData());
+    var_dump($form->getData());
 }
 $form->show();
 

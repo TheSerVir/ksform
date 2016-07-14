@@ -22,5 +22,9 @@ class Checkbox extends Element {
         $this->parameters["value"] = $temp;
         return $res;
     }
+     
+    public function getValue() {
+        return (isset($this->parameters["checked"]) && $this->parameters["checked"] == "checked") ? $this->parameters["value"] : "";
+    }
     
 }
