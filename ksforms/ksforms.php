@@ -40,7 +40,9 @@ class Form {
                 switch($key) {
                     case "elements":
                         foreach($val as $name => $data) {
-                            if(isset($data["type"]) && file_exists(dirname(__FILE__)."/elements/element.".strtolower($data["type"]).".php")) {
+                            $file = dirname(__FILE__)."/elements/element.".strtolower($data["type"]).".php";
+                            if(isset($data["type"]) && file_exists($file)) {
+                                require_once $file;
                                 $classname = "ksf\\".ucfirst(strtolower($data["type"]));
                             } else {
                                 $classname = "ksf\\Element";
@@ -60,7 +62,9 @@ class Form {
     }
     
     public function setElement($name, $data, $position = null) {
-        if(isset($data["type"]) && file_exists(dirname(__FILE__)."/elements/element.".strtolower($data["type"]).".php")) {
+        $file = dirname(__FILE__)."/elements/element.".strtolower($data["type"]).".php";
+        if(isset($data["type"]) && file_exists($file)) {
+            require_once $file;
             $classname = "ksf\\".ucfirst(strtolower($data["type"]));
         } else {
             $classname = "ksf\\Element";
@@ -114,6 +118,7 @@ class Form {
         foreach($this->elements as $element) {
             $html .= $element->getHTML($this->prefix) . "\r\n";
         }
+        $html .= '<input type="hidden" name="'.$this->parameters['name'].'" />';
         $html .= '</form>';
         return $html;
     }

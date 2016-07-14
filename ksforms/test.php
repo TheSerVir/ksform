@@ -35,7 +35,6 @@ $arr = [
         ]
     ]
 ];
-echo "<pre>" . json_encode($arr, JSON_PRETTY_PRINT) . "</pre>";
 
 
 $form = "
@@ -47,6 +46,19 @@ $form = "
             title Название
             class val
             placeholder Носки
+        elem0
+            type select
+            title Select
+            values 
+                v V
+                a a
+                l l
+                u u
+                e e
+            validators
+                required
+                    *Поле обязательное
+                    *Заполни, пожалуйста
         elem2
             type text
             title Текст длиною 5-10 символов
@@ -55,6 +67,10 @@ $form = "
                     *Проблемы с количеством символов
                     *Много их
                     *Мало их
+        elem8
+            type checkbox
+            title Checkbox
+            value test
         elem3
             type text
             title E-mail
@@ -62,6 +78,17 @@ $form = "
                 email
                     *Мы не сможем отправить вам уведомление
                     *Мыло неправильное
+        categories
+            type checkboxes
+            title Categories
+            values
+                cat1 Категория1
+                cat2 Категория2
+                cat3 Категория3
+                cat4 Категория4
+            class switch
+            before <div>
+            after </div>
         submit
             type submit
             text Сохранить
@@ -69,10 +96,10 @@ $form = "
 $form = new ksf\Form($form);
 
 
-//$form->setElement("sh", ["type" => "submit", "text" => "Сохранить"], 0);
+$form->setElement("sh", ["type" => "submit", "text" => "Сохранить"], 0);
 //$form->removeElement("sh");
 //$form->setElementPosition("submit", 1);
-
+var_dump($_POST);
 if(isset($_POST["form"])) {
     var_dump($form->validate($_POST));
 //    var_dump($form->getData());

@@ -10,13 +10,12 @@ namespace ksf;
 
 class Element {
     
-    private $name = null;
-    private $type = null;
-    private $value = "";
+    protected $name = null;
+    protected $type = null;
     
-    private $parameters = [];
-    private $validators = [];
-    private $template = "./templates/{name}.html";
+    protected $parameters = [];
+    protected $validators = [];
+    protected $template = "./templates/{name}.html";
     
     
     public function __construct($name, $args = null) {
@@ -35,7 +34,6 @@ class Element {
                         trigger_error("You can't use that names");
                     break;
                     default:
-                        if($k == 'value') $this->value = $v;
                         $this->parameters[$k] = $v;
                     break;
                 }
@@ -47,7 +45,7 @@ class Element {
         }
     }
     
-    private final function templateUrl() {
+    protected final function templateUrl() {
         if($this->template[0] == '.') $this->template = dirname(__FILE__) . trim($this->template, '.');
         $this->template = str_replace("{name}", $this->type, $this->template);
     }
