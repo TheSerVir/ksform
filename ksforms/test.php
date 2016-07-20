@@ -86,6 +86,13 @@ $form = "
                 cat2 Категория2
                 cat3 Категория3
                 cat4 Категория4
+            validators
+                minchecked:1
+                    *Так не пойдет
+                    *Выберите хоть один элемент
+                maxchecked:3
+                    *Так не пойдет
+                    *Слишком много элементов выбрано
             class switch
             before <div>
             after </div>

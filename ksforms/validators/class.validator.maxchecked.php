@@ -16,7 +16,8 @@ class Maxchecked extends Validator {
     public function validate($array) {
         if(!is_null($this->parameters)) {
             $count = intval($this->parameters);
-            if(count($array) > $count) {
+            $cnt = (is_array($array)) ? count($array) : 0;
+            if($cnt > $count) {
                 return ["warning" => $this->warning, "error" => $this->error[0]];
             }
             return true;
